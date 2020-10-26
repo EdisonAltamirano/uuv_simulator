@@ -70,7 +70,7 @@
   </xacro:macro>
 
   <xacro:macro name="default_imu_enu" params="namespace parent_link *origin">
-    <!-- ADIS16448 IMU. -->
+    <!-- ADIS16448 IMU. , have to replace it with Vanttec-IMU--> 
     <xacro:imu_plugin_macro
       namespace="${namespace}"
       imu_suffix=""
@@ -95,7 +95,7 @@
   </xacro:macro>
 
   <xacro:macro name="default_imu_ned" params="namespace parent_link *origin">
-    <!-- ADIS16448 IMU. -->
+    <!-- ADIS16448 IMU. have to replace it with Vanttec-IMU-->
     <xacro:imu_plugin_macro
       namespace="${namespace}"
       imu_suffix=""

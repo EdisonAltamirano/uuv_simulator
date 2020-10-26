@@ -22,7 +22,7 @@
   <depend>geometry_msgs</depend>
   <depend>std_msgs</depend>
   <depend>roscpp</depend>
-  <depend>uuv_gazebo_plugins</depend>
+  <depend>uuv_gazebo_plugins</depend> 
   <depend>uuv_sensor_ros_plugins_msgs</depend>
   <depend>tf</depend>
   <depend>message_filters</depend>
