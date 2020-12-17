@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2016 The UUV Simulator Authors.
+     All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+--> 
+<robot name="torpedo1_base" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Macro for a minimal collision block (for when you do not want collision block but gazebo needs one) -->
+  <xacro:macro name="no_collision">
+    <collision>
+      <geometry>
+        <cylinder length="${0.000001}" radius="${0.000001}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 ${0.5*pi} 0"/>
+    </collision> 
+  </xacro:macro>
+
+  <xacro:macro name="torpedo1" params="namespace parent_link suffix *origin">
+    <xacro:torpedo_shoot1
+      namespace="${namespace}"
+      suffix="${suffix}"
+      parent_link="${parent_link}"
+      topic="torpedo1"
+      mass="10"
+      update_rate="30"
+      hfov="1.5125"
+      width="768" 
+      height="492"
+      stddev="0.02"
+      scale="1.0"
+      offset_x="0.049"
+      offset_y="0"
+      offset_z="0.053">
+      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+      <xacro:insert_block name="origin" />
+    </xacro:torpedo_shoot1>
+  </xacro:macro>
+
+  <xacro:macro name="torpedo_shoot1" params="offset_x offset_y offset_z namespace suffix parent_link topic mass update_rate
+      hfov width height stddev scale
+      *inertia *origin">
+  
+    <!-- Camera link -->
+    <link name="${suffix}torpedo1_base">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="file://$(find shooter_description)/meshes/Torpedo_simulacion_origen_corregido.dae" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.05 0.05 0.05"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="1"/>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <inertia ixx="1.0"
+                     ixy="0.0"
+                     ixz="0.0"
+                     iyy="1.0"
+                     iyz="0.0"
+                     izz="1.0"
+            />
+        </inertial>
+    </link>
+    <!-- Connect torpedo1 to parent frame-->
+    <joint name="${suffix}torpedo1_joint" type="revolute">
+        <parent link="${parent_link}"/>
+        <child link="${suffix}torpedo1_base"/>
+        <xacro:insert_block name="origin"/>
+        <limit upper="0" lower="0" effort="0" velocity="0" />
+        <axis xyz="1 0 0"/>
+    </joint>
+
+
+<!-- **********************************************************-->
+<!-- GAZEBO DEFINITIONS ***************************************-->
+
+    <!-- Load plugin to the model ("robot" in urdf format)-->
+    <gazebo>
+        <plugin name="object_controller" filename="libgazebo_ros_planar_move.so">
+            <commandTopic>/Shoot_Torpedo_1</commandTopic>
+            <odometryTopic>odom</odometryTopic>
+            <odometryFrame>odom</odometryFrame>
+            <odometryRate>20.0</odometryRate>
+            <robotBaseFrame>torpedo1_base</robotBaseFrame>
+            <publishTF>false</publishTF>
+        </plugin>
+        <!--<pose frame="">0 0 0.015 0 0 0</pose>-->
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>
